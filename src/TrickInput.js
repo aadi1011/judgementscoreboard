@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 
 export default function TrickInput({ round, activePlayers, tricks, setTricks, onComplete }) {
@@ -22,36 +23,33 @@ export default function TrickInput({ round, activePlayers, tricks, setTricks, on
   };
 
   return (
-    <div className="bg-green-900 bg-opacity-90 rounded-xl p-6 shadow-lg max-w-md mx-auto">
-      <h3 className="text-xl font-bold text-yellow-300 mb-4">Round {round} - Trick Winners</h3>
-      <div className="mb-4 text-white">
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#ffd700', marginBottom: '1rem', fontFamily: 'Oswald, Roboto, Arial' }}>Round {round} - Trick Winners</h3>
+      <div className="status" style={{ marginBottom: '1rem', color: '#184d2b', fontWeight: 600 }}>
         Tricks completed: {tricks.length} / {round}
       </div>
       {currentTrick < round && (
-        <div>
-          <label className="block mb-2 font-semibold text-white">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+          <label className="font-semibold" style={{ color: '#184d2b', marginBottom: '0.5rem', fontSize: '1.1rem' }}>
             Trick {currentTrick + 1}: Who won?
           </label>
-          <select
-            value={winner}
-            onChange={e => setWinner(e.target.value)}
-            className="w-48 px-3 py-2 rounded bg-green-800 text-white border border-green-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            aria-label="Trick winner select"
-          >
-            <option value="">Select player</option>
-            {activePlayers.map(p => (
-              <option key={p.name} value={p.name}>{p.name}</option>
-            ))}
-          </select>
-          <button
-            className="ml-4 bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold py-2 px-4 rounded-lg shadow transition"
-            onClick={handleTrick}
-          >
-            Submit
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.5rem' }}>
+            <select
+              value={winner}
+              onChange={e => setWinner(e.target.value)}
+              aria-label="Trick winner select"
+              style={{ width: '180px', fontSize: '1.1rem', padding: '0.5rem', borderRadius: '8px', border: '2px solid #ffd700', background: '#fffde4', color: '#184d2b', fontWeight: 600, boxShadow: '0 2px 8px rgba(44,62,80,0.08)' }}
+            >
+              <option value="">Select player</option>
+              {activePlayers.map(p => (
+                <option key={p.name} value={p.name}>{p.name}</option>
+              ))}
+            </select>
+            <button className="btn btn-howto" style={{ fontSize: '1.1rem', padding: '0.7rem 1.5rem' }} onClick={handleTrick}>Submit</button>
+          </div>
         </div>
       )}
-      {error && <div className="text-red-400 mt-4">{error}</div>}
+      {error && <div className="error" style={{ marginTop: '0.5rem' }}>{error}</div>}
     </div>
   );
 }

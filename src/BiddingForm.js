@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 
 export default function BiddingForm({ round, activePlayers, bids, setBids, onComplete }) {
@@ -30,47 +31,58 @@ export default function BiddingForm({ round, activePlayers, bids, setBids, onCom
     }
   };
 
+  // Helper for bid status
+  const sumSoFar = bids.reduce((a, b) => a + b, 0);
+  let bidStatus = "";
+  if (currentPlayer === activePlayers.length - 1 && currentBid !== "") {
+    if (sumSoFar + Number(currentBid) < round) bidStatus = "Underbid";
+    if (sumSoFar + Number(currentBid) > round) bidStatus = "Overbid";
+  }
+
   return (
-    <div className="bg-green-900 bg-opacity-90 rounded-xl p-6 shadow-lg max-w-md mx-auto">
-      <h3 className="text-xl font-bold text-yellow-300 mb-4">Round {round} Bidding</h3>
-      <div className="mb-4">
-        <div className="text-white font-semibold mb-2">
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#ffd700', marginBottom: '1rem', fontFamily: 'Oswald, Roboto, Arial' }}>Round {round} Bidding</h3>
+      <div style={{ width: '100%', marginBottom: '1.2rem', textAlign: 'center' }}>
+        <div className="status" style={{ marginBottom: '0.5rem' }}>
           {activePlayers.map((p, i) => (
-            <span key={p.name} className={i === currentPlayer ? "text-yellow-400" : ""}>
+            <span key={p.name} style={i === currentPlayer ? { color: '#ffd700', fontWeight: 700 } : {}}>
               {p.name}{i < activePlayers.length - 1 ? ", " : ""}
             </span>
           ))}
         </div>
-        <div className="text-white mb-2">
+        <div className="status" style={{ marginBottom: '0.5rem' }}>
           Current bids: {bids.map((b, i) => `${activePlayers[i].name}: ${b}`).join(", ") || "None"}
         </div>
-        <div className="text-white mb-2">
-          Current sum: {bids.reduce((a, b) => a + b, 0)}
+        <div className="status" style={{ marginBottom: '0.5rem' }}>
+          Current sum: {sumSoFar}
         </div>
       </div>
       {currentPlayer < activePlayers.length && (
-        <div>
-          <label className="block mb-2 font-semibold text-white">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+          <label className="font-semibold" style={{ color: '#184d2b', marginBottom: '0.5rem', fontSize: '1.1rem' }}>
             {activePlayers[currentPlayer].name}, enter your bid (0-{round}):
           </label>
-          <input
-            type="number"
-            min={0}
-            max={round}
-            value={currentBid}
-            onChange={e => setCurrentBid(e.target.value)}
-            className="w-24 px-3 py-2 rounded bg-green-800 text-white border border-green-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            aria-label="Bid input"
-          />
-          <button
-            className="ml-4 bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold py-2 px-4 rounded-lg shadow transition"
-            onClick={handleBid}
-          >
-            Submit
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.5rem' }}>
+            <input
+              type="number"
+              min={0}
+              max={round}
+              value={currentBid}
+              onChange={e => setCurrentBid(e.target.value)}
+              aria-label="Bid input"
+              style={{ width: '80px', fontSize: '1.2rem', padding: '0.5rem', borderRadius: '8px', border: '2px solid #ffd700', background: '#fffde4', color: '#184d2b', textAlign: 'center', fontWeight: 700, boxShadow: '0 2px 8px rgba(44,62,80,0.08)' }}
+            />
+            <button className="btn btn-howto" style={{ fontSize: '1.1rem', padding: '0.7rem 1.5rem' }} onClick={handleBid}>Submit</button>
+          </div>
+          {bidStatus && (
+            <div className="status" style={{ color: bidStatus === 'Underbid' ? '#388e3c' : '#d32f2f', fontWeight: 700, marginBottom: '0.5rem' }}>
+              {bidStatus === 'Underbid' && 'Underbid: The sum is less than the round number.'}
+              {bidStatus === 'Overbid' && 'Overbid: The sum is more than the round number.'}
+            </div>
+          )}
         </div>
       )}
-      {error && <div className="text-red-400 mt-4">{error}</div>}
+      {error && <div className="error" style={{ marginTop: '0.5rem' }}>{error}</div>}
     </div>
   );
 }

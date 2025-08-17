@@ -1,13 +1,124 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
+/* Google Fonts import for Oswald and Roboto */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@400;700&display=swap');
 
 body {
-  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 30%, #388e3c 0%, #2e7d32 80%, #184d2b 100%);
+  font-family: 'Roboto', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.7s;
+.centered-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-box {
+  background: rgba(255,255,255,0.97);
+  border-radius: 15px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18), 0 1.5px 6px rgba(44, 62, 80, 0.08);
+  max-width: 800px;
+  width: 95vw;
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 1s ease-in;
+  margin: 2%;
+}
+
+.welcome-title {
+  font-family: 'Oswald', 'Roboto', Arial, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #184d2b;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  animation: fadeIn 1s ease-in;
+}
+
+.card-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s;
+  animation: fadeIn 1.2s;
+}
+.card-icon:hover {
+  animation: bounce 0.6s;
+  transform: scale(1.08) rotate(-5deg);
+}
+
+@keyframes bounce {
+  0% { transform: scale(1) translateY(0); }
+  30% { transform: scale(1.08) translateY(-10px); }
+  60% { transform: scale(0.98) translateY(5px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+.welcome-buttons {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn {
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  padding: 0.85rem 2.2rem;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  outline: none;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-start {
+  background: linear-gradient(90deg, #d32f2f 0%, #c62828 100%);
+  color: #fff;
+}
+.btn-start:hover, .btn-start:focus {
+  background: linear-gradient(90deg, #b71c1c 0%, #d32f2f 100%);
+  box-shadow: 0 4px 16px rgba(44,62,80,0.12);
+  transform: scale(1.05);
+}
+.btn-howto {
+  background: linear-gradient(90deg, #ffd700 0%, #fffde4 100%);
+  color: #184d2b;
+}
+.btn-howto:hover, .btn-howto:focus {
+  background: linear-gradient(90deg, #ffe066 0%, #ffd700 100%);
+  color: #b71c1c;
+  box-shadow: 0 4px 16px rgba(44,62,80,0.12);
+  transform: scale(1.05);
+}
+
+.footer {
+  margin-top: 2rem;
+  color: #388e3c;
+  font-size: 1rem;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.welcome-desc {
+  width: 100%;
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #388e3c;
+  font-size: 1.1rem;
+  opacity: 0.85;
+  font-family: 'Roboto', Arial, sans-serif;
 }
 
 @keyframes fadeIn {
@@ -15,12 +126,14 @@ body {
   to { opacity: 1; transform: translateY(0);}
 }
 
-.animate-confetti {
-  animation: confetti 1.5s infinite;
-}
-
-@keyframes confetti {
-  0% { transform: rotate(-10deg) scale(1);}
-  50% { transform: rotate(10deg) scale(1.2);}
-  100% { transform: rotate(-10deg) scale(1);}
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .welcome-box {
+    padding: 1.2rem 0.5rem;
+    max-width: 99vw;
+  }
+  .welcome-title { font-size: 1.5rem; }
+  .card-icon { width: 70px; height: 70px; }
+  .btn { padding: 0.6rem 1.2rem; font-size: 1rem; }
+  .footer { font-size: 0.9rem; }
 }

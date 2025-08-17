@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -35,42 +36,42 @@ export default function Setup() {
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-green-800 bg-opacity-90 rounded-xl p-8 mt-8 text-white shadow-xl animate-fade-in">
-      <h2 className="text-3xl font-bold mb-6">Game Setup</h2>
-      <div className="mb-6">
-        <label className="block mb-2 font-semibold">Number of Players:</label>
-        <div className="flex gap-2 flex-wrap">
-          {[...Array(8)].map((_, i) => (
-            <button
-              key={i}
-              className={`px-4 py-2 rounded-lg font-bold ${numPlayers === i + 1 ? "bg-yellow-400 text-green-900" : "bg-green-900 text-white"} transition`}
-              onClick={() => handleNumPlayers(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
+    <div className="centered-container animate-fade-in">
+      <div className="welcome-box" style={{ maxWidth: 500 }}>
+        <h2 style={{ fontFamily: 'Oswald, Roboto, Arial', fontWeight: 700, fontSize: '2rem', color: '#184d2b', marginBottom: '1.5rem', textAlign: 'center' }}>Game Setup</h2>
+        <div style={{ width: '100%', marginBottom: '1.2rem' }}>
+          <label className="font-semibold" style={{ color: '#184d2b', marginBottom: '0.5rem', display: 'block' }}>Number of Players:</label>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '1rem' }}>
+            {[...Array(5)].map((_, i) => (
+              <button
+                key={i}
+                className={`btn ${numPlayers === i + 4 ? 'btn-howto' : 'btn-secondary'}`}
+                style={{ minWidth: 38 }}
+                onClick={() => handleNumPlayers(i + 4)}
+              >
+                {i + 4}
+              </button>
+            ))}
+          </div>
         </div>
+        <div style={{ width: '100%', marginBottom: '1.2rem' }}>
+          <label className="font-semibold" style={{ color: '#184d2b', marginBottom: '0.5rem', display: 'block' }}>Player Names:</label>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {names.map((name, i) => (
+              <input
+                key={i}
+                type="text"
+                placeholder={name}
+                onChange={e => handleNameChange(i, e.target.value)}
+                aria-label={`Player ${i + 1} name`}
+                style={{ width: '120px', fontSize: '1rem', padding: '0.5rem', borderRadius: '8px', border: '1.5px solid #b2dfdb', background: '#f6fff7', color: '#184d2b', marginBottom: '0.5rem' }}
+              />
+            ))}
+          </div>
+        </div>
+        {error && <div className="error" style={{ marginBottom: '1rem' }}>{error}</div>}
+        <button className="btn btn-start" style={{ width: '100%', marginTop: '0.5rem' }} onClick={handleBegin}>Begin Game</button>
       </div>
-      <div className="mb-6">
-        <label className="block mb-2 font-semibold">Player Names:</label>
-        {names.map((name, i) => (
-          <input
-            key={i}
-            type="text"
-            value={name}
-            onChange={e => handleNameChange(i, e.target.value)}
-            className="mb-2 w-full px-3 py-2 rounded bg-green-900 text-white border border-green-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            aria-label={`Player ${i + 1} name`}
-          />
-        ))}
-      </div>
-      {error && <div className="text-red-400 mb-4">{error}</div>}
-      <button
-        className="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold py-2 px-6 rounded-lg shadow transition"
-        onClick={handleBegin}
-      >
-        Begin Game
-      </button>
     </div>
   );
 }

@@ -26,6 +26,7 @@ function getWinners(players) {
   return players.filter(p => p.score === maxScore);
 }
 
+
 export default function Game() {
   const navigate = useNavigate();
   const [players, setPlayers] = useState(getInitialPlayers());
@@ -37,6 +38,23 @@ export default function Game() {
   const [roundScores, setRoundScores] = useState([]);
   const [eliminated, setEliminated] = useState([]);
   const [confetti, setConfetti] = useState(false);
+  const [biddingOrder, setBiddingOrder] = useState([]);
+  const [showElimBanner, setShowElimBanner] = useState(false);
+  const [elimModal, setElimModal] = useState(null);
+  const [elimRounds, setElimRounds] = useState([]);
+
+  // Precompute elimination rounds based on starting player count
+  useEffect(() => {
+    const p = players.length;
+    let rounds = [];
+    // Judgement elimination logic: eliminate until 4 remain, based on deck constraints
+    if (p === 5) rounds = [10];
+    else if (p === 6) rounds = [8, 10];
+    else if (p === 7) rounds = [6, 8, 10];
+    else if (p === 8) rounds = [5, 7, 8, 10];
+    console.log('Elimination rounds setup:', { playerCount: p, elimRounds: rounds });
+    setElimRounds(rounds);
+  }, [players.length]);
 
   // Load from localStorage if available
   useEffect(() => {
@@ -51,13 +69,15 @@ export default function Game() {
       setTricks(state.tricks);
       setRoundScores(state.roundScores);
       setEliminated(state.eliminated);
+      if (state.biddingOrder) setBiddingOrder(state.biddingOrder);
+      if (state.elimRounds) setElimRounds(state.elimRounds);
     }
   }, []);
 
   // Save to localStorage
   useEffect(() => {
     localStorage.setItem("judgement_state", JSON.stringify({
-      players,
+      players, 
       activePlayers,
       round,
       phase,
@@ -65,32 +85,35 @@ export default function Game() {
       tricks,
       roundScores,
       eliminated,
+      biddingOrder,
+      elimRounds,
     }));
-  }, [players, activePlayers, round, phase, bids, tricks, roundScores, eliminated]);
+  }, [players, activePlayers, round, phase, bids, tricks, roundScores, eliminated, biddingOrder, elimRounds]);
 
-  // Handle elimination after round 10 for 4-6 players
+  // Show elimination banner if this is an elimination round (all phases)
   useEffect(() => {
-    if (round === 11 && players.length >= 4 && players.length <= 6 && eliminated.length === 0) {
-      const scores = activePlayers.map(p => p.score);
-      const minScore = Math.min(...scores);
-      const idx = scores.indexOf(minScore);
-      const elimPlayer = activePlayers[idx];
-      setEliminated([elimPlayer.name]);
-      setActivePlayers(activePlayers.filter((p, i) => i !== idx));
-      setPlayers(players.map(p =>
-        p.name === elimPlayer.name ? { ...p, eliminated: true } : p
-      ));
+    const isElim = elimRounds.includes(round);
+    console.log('Checking elimination banner:', { round, elimRounds, isElim });
+    setShowElimBanner(isElim);
+  }, [round, elimRounds]);
+
+  // Compute bidding order for the round
+  useEffect(() => {
+    // Only use non-eliminated players
+    const actives = players.filter(p => !p.eliminated);
+    if (actives.length === 0) {
+      setBiddingOrder([]);
+      return;
     }
-  }, [round, activePlayers, players, eliminated]);
-
-  // Reset round state
-  useEffect(() => {
-    setBids([]);
-    setTricks([]);
-    setRoundScores([]);
-    setPhase("bidding");
-    setActivePlayers(players.filter(p => !p.eliminated));
-  }, [round]);
+    // Rotate order: round 1 starts with player 1, round 2 with player 2, etc.
+    const startIdx = (round - 1) % actives.length;
+    const order = [];
+    for (let i = 0; i < actives.length; i++) {
+      order.push(actives[(startIdx + i) % actives.length]);
+    }
+    setBiddingOrder(order);
+    setActivePlayers(actives);
+  }, [round, players]);
 
   // End game confetti
   useEffect(() => {
@@ -110,26 +133,33 @@ export default function Game() {
   // Bidding phase
   if (phase === "bidding") {
     return (
-      <div className="max-w-4xl mx-auto mt-8 animate-fade-in">
-        <Scoreboard
-          players={players}
-          activePlayers={activePlayers}
-          round={round}
-          bids={bids}
-          tricks={tricks}
-          eliminated={eliminated}
-        />
-        <div className="mt-8">
-          <BiddingForm
-            round={round}
+      <div className="centered-container animate-fade-in" style={{ minHeight: '100vh' }}>
+        <div className="welcome-box" style={{ maxWidth: 700 }}>
+          {showElimBanner && (
+            <div style={{ background: '#FF0000', color: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(44,62,80,0.18)', fontWeight: 700, fontSize: '1.1rem', padding: '1rem', marginBottom: '1.2rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.7rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>⚠️</span> This is an <span style={{ textDecoration: 'underline' }}>Elimination Round</span>! The player with the lowest score will be eliminated after this round.
+            </div>
+          )}
+          <Scoreboard
+            players={players}
             activePlayers={activePlayers}
+            round={round}
             bids={bids}
-            setBids={setBids}
-            onComplete={bids => {
-              setBids(bids);
-              setPhase("playing");
-            }}
+            tricks={tricks}
+            eliminated={eliminated}
           />
+          <div style={{ marginTop: '2rem' }}>
+            <BiddingForm
+              round={round}
+              activePlayers={biddingOrder}
+              bids={bids}
+              setBids={setBids}
+              onComplete={bids => {
+                setBids(bids);
+                setPhase("playing");
+              }}
+            />
+          </div>
         </div>
       </div>
     );
@@ -138,82 +168,162 @@ export default function Game() {
   // Playing phase
   if (phase === "playing") {
     return (
-      <div className="max-w-4xl mx-auto mt-8 animate-fade-in">
-        <Scoreboard
-          players={players}
-          activePlayers={activePlayers}
-          round={round}
-          bids={bids}
-          tricks={tricks}
-          eliminated={eliminated}
-        />
-        <div className="mt-8">
-          <TrickInput
-            round={round}
+      <div className="centered-container animate-fade-in" style={{ minHeight: '100vh' }}>
+        <div className="welcome-box" style={{ maxWidth: 700 }}>
+          {showElimBanner && (
+            <div style={{ background: '#FF0000', color: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(44,62,80,0.18)', fontWeight: 700, fontSize: '1.1rem', padding: '1rem', marginBottom: '1.2rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.7rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>⚠️</span> This is an <span style={{ textDecoration: 'underline' }}>Elimination Round</span>! The player with the lowest score will be eliminated after this round.
+            </div>
+          )}
+          <Scoreboard
+            players={players}
             activePlayers={activePlayers}
+            round={round}
+            bids={bids}
             tricks={tricks}
-            setTricks={setTricks}
-            onComplete={tricks => {
-              setTricks(tricks);
-              // Calculate scores
-              const newPlayers = players.map(p => {
-                if (p.eliminated) return p;
-                const idx = activePlayers.findIndex(a => a.name === p.name);
-                const bid = idx !== -1 ? bids[idx] : null;
-                const wins = tricks.filter(w => w === p.name).length;
-                let delta = 0;
-                if (bid === 0 && wins === 0) delta = round;
-                else if (bid > 0 && bid === wins) delta = 2 * bid;
-                else delta = -Math.abs(bid - wins);
-                return {
-                  ...p,
-                  bid,
-                  wins,
-                  score: p.score + delta,
-                  lastDelta: delta,
-                };
-              });
-              setPlayers(newPlayers);
-              setRoundScores(newPlayers.map(p => ({
-                name: p.name,
-                bid: p.bid,
-                wins: p.wins,
-                delta: p.lastDelta,
-                score: p.score,
-                eliminated: p.eliminated,
-              })));
-              setPhase("summary");
-            }}
+            eliminated={eliminated}
           />
+          <div style={{ marginTop: '2rem' }}>
+            <TrickInput
+              round={round}
+              activePlayers={activePlayers}
+              tricks={tricks}
+              setTricks={setTricks}
+              onComplete={tricks => {
+                setTricks(tricks);
+                // Calculate scores
+                const newPlayers = players.map(p => {
+                  if (p.eliminated) return p;
+                  const idx = activePlayers.findIndex(a => a.name === p.name);
+                  const bid = idx !== -1 ? bids[idx] : null;
+                  const wins = tricks.filter(w => w === p.name).length;
+                  let delta = 0;
+                  if (bid === 0 && wins === 0) delta = round;
+                  else if (bid > 0 && bid === wins) delta = 2 * bid;
+                  else delta = -Math.abs(bid - wins);
+                  return {
+                    ...p,
+                    bid,
+                    wins,
+                    score: p.score + delta,
+                    lastDelta: delta,
+                  };
+                });
+                setPlayers(newPlayers);
+                setRoundScores(newPlayers.map(p => ({
+                  name: p.name,
+                  bid: p.bid,
+                  wins: p.wins,
+                  delta: p.lastDelta,
+                  score: p.score,
+                  eliminated: p.eliminated,
+                })));
+                setPhase("summary");
+              }}
+            />
+          </div>
         </div>
       </div>
     );
   }
 
   // Round summary
+  // Round summary
   if (phase === "summary") {
+    // Check if elimination is needed after this round
+    const isElimRound = elimRounds.includes(round);
+    const shouldEliminate = isElimRound && activePlayers.length > 4;
+    let elimPlayers = [];
+    if (shouldEliminate) {
+      const scores = activePlayers.map(p => p.score);
+      const minScore = Math.min(...scores);
+      elimPlayers = activePlayers.filter(p => p.score === minScore);
+      console.log('Elimination round:', round, 'Scores:', scores, 'Min:', minScore, 'Eliminated:', elimPlayers.map(p => p.name));
+    }
+    const handleNext = () => {
+      console.log('handleNext called', { round, shouldEliminate, elimPlayers, activePlayers });
+      if (round === TOTAL_ROUNDS) {
+        setPhase("end");
+        return;
+      }
+      if (shouldEliminate && elimPlayers.length > 0) {
+        setElimModal({
+          names: elimPlayers.map(p => p.name),
+          scores: elimPlayers.map(p => p.score),
+          newCount: activePlayers.length - elimPlayers.length
+        });
+        setPlayers(prev => prev.map(p =>
+          elimPlayers.some(e => e.name === p.name) ? { ...p, eliminated: true } : p
+        ));
+        setActivePlayers(prev => prev.filter(p => !elimPlayers.some(e => e.name === p.name)));
+        setEliminated(prev => [...prev, ...elimPlayers.map(p => p.name)]);
+        console.log('Players after elimination:', players);
+      } else {
+        setBids([]);
+        setTricks([]);
+        setRoundScores([]);
+        setPhase("bidding");
+        setActivePlayers(players.filter(p => !p.eliminated));
+        setRound(round + 1);
+      }
+    };
+    const handleAcknowledgeElim = () => {
+      setElimModal(null);
+      setBids([]);
+      setTricks([]);
+      setRoundScores([]);
+      setPhase("bidding");
+      setActivePlayers(players.filter(p => !p.eliminated));
+      setRound(round + 1);
+    };
     return (
-      <div className="max-w-4xl mx-auto mt-8 animate-fade-in">
-        <Scoreboard
-          players={players}
-          activePlayers={activePlayers}
-          round={round}
-          bids={bids}
-          tricks={tricks}
-          eliminated={eliminated}
-        />
-        <RoundSummary
-          round={round}
-          scores={roundScores}
-          eliminated={eliminated}
-          onNext={() => {
-            if (round === TOTAL_ROUNDS) {
-              setPhase("end");
-            } else {
-              setRound(round + 1);
-            }
-          }}
-        />
+      <div className="centered-container animate-fade-in" style={{ minHeight: '100vh' }}>
+        <div className="welcome-box" style={{ maxWidth: 700 }}>
+          {showElimBanner && (
+            <div style={{ background: '#FF0000', color: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(44,62,80,0.18)', fontWeight: 700, fontSize: '1.1rem', padding: '1rem', marginBottom: '1.2rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.7rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>⚠️</span> This is an <span style={{ textDecoration: 'underline' }}>Elimination Round</span>! The player with the lowest score will be eliminated after this round.
+            </div>
+          )}
+          <Scoreboard
+            players={players}
+            activePlayers={activePlayers}
+            round={round}
+            bids={bids}
+            tricks={tricks}
+            eliminated={eliminated}
+          />
+          <RoundSummary
+            round={round}
+            scores={roundScores}
+            eliminated={eliminated}
+            onNext={handleNext}
+            onEndGame={() => {
+              if (window.confirm("Are you sure you want to end the game now? This will show the winner based on current scores.")) {
+                setPhase("end");
+              }
+            }}
+          />
+          {elimModal && (
+            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.45)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ background: '#FF0000', color: '#fff', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.18)', padding: '2rem 2.5rem', textAlign: 'center', fontWeight: 700, fontSize: '1.2rem', maxWidth: 350 }}>
+                <span style={{ fontSize: '2rem', display: 'block', marginBottom: '1rem' }}>🚫</span>
+                {elimModal.names.length === 1 ? (
+                  <>
+                    Player <span style={{ textDecoration: 'underline', fontWeight: 800 }}>{elimModal.names[0]}</span> has been eliminated!<br />
+                    Score: <span style={{ color: '#ffd700', fontWeight: 800 }}>{elimModal.scores[0]}</span><br />
+                  </>
+                ) : (
+                  <>
+                    Players <span style={{ textDecoration: 'underline', fontWeight: 800 }}>{elimModal.names.join(", ")}</span> have been eliminated!<br />
+                    Scores: <span style={{ color: '#ffd700', fontWeight: 800 }}>{elimModal.scores.join(", ")}</span><br />
+                  </>
+                )}
+                Continuing with <span style={{ color: '#ffd700', fontWeight: 800 }}>{elimModal.newCount}</span> players.<br />
+                <button className="btn btn-howto" style={{ marginTop: '1.5rem', width: '100%' }} onClick={handleAcknowledgeElim}>Next Round</button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
@@ -222,33 +332,36 @@ export default function Game() {
   if (phase === "end") {
     const winners = getWinners(players);
     return (
-      <div className="max-w-3xl mx-auto mt-16 text-center animate-fade-in">
-        {confetti && (
-          <div className="fixed inset-0 pointer-events-none z-50">
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-7xl animate-confetti">🎉</span>
+      <div className="centered-container animate-fade-in" style={{ minHeight: '100vh' }}>
+        <div className="welcome-box" style={{ maxWidth: 700, textAlign: 'center' }}>
+          {confetti && (
+            <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 50 }}>
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: '5rem' }} className="animate-confetti">🎉</span>
+              </div>
             </div>
-          </div>
-        )}
-        <h2 className="text-4xl font-bold text-yellow-400 mb-6">Game Over!</h2>
-        <h3 className="text-2xl font-semibold text-white mb-4">
-          Winner{winners.length > 1 ? "s" : ""}: {winners.map(w => w.name).join(", ")}
-        </h3>
-        <Scoreboard
-          players={players}
-          activePlayers={activePlayers}
-          round={round}
-          bids={bids}
-          tricks={tricks}
-          eliminated={eliminated}
-        />
-        <div className="mt-8 text-white text-lg">Thank you for playing!</div>
-        <button
-          className="mt-8 bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold py-2 px-6 rounded-lg shadow transition"
-          onClick={handleRestart}
-        >
-          Restart Game
-        </button>
+          )}
+          <h2 style={{ fontSize: '2.5rem', fontWeight: 700, color: '#ffd700', marginBottom: '1.2rem', fontFamily: 'Oswald, Roboto, Arial' }}>Game Over!</h2>
+          <h3 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#184d2b', marginBottom: '1.2rem' }}>
+            <span style={{ color: '#d32f2f', fontWeight: 700, fontSize: '2rem' }}>🏆</span> Winner{winners.length > 1 ? "s" : ""}: {winners.map(w => w.name).join(", ")}
+          </h3>
+          <Scoreboard
+            players={players}
+            activePlayers={activePlayers}
+            round={round}
+            bids={bids}
+            tricks={tricks}
+            eliminated={eliminated}
+          />
+          <div style={{ marginTop: '2rem', color: '#388e3c', fontSize: '1.2rem' }}>Thank you for playing!</div>
+          <button
+            className="btn btn-howto"
+            style={{ marginTop: '2rem', width: '100%' }}
+            onClick={handleRestart}
+          >
+            Restart Game
+          </button>
+        </div>
       </div>
     );
   }
