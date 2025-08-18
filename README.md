@@ -1,70 +1,63 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# One Card (Judgement) Game Scoreboard
 
-## Available Scripts
+An interactive, modern React app for tracking scores, bids, and eliminations in the classic Judgement card game.
 
-In the project directory, you can run:
+## 🚀 Live Demo
 
-### `npm start`
+**Hosted at:** [https://your-demo-url.com](https://your-demo-url.com) <!-- Replace with actual URL when deployed -->
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🎮 How It Works
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Supports 4-8 players, with dynamic elimination rounds based on deck constraints.
+- Tracks player names, scores, bids, tricks, and status (active/eliminated).
+- Cyclic bidding order and robust elimination logic.
+- Modern, responsive UI with collapsible scoreboard, banners, modals, and navigation.
+- Home and How-to-Play buttons always accessible.
+- All game state is saved in localStorage for session persistence.
 
-### `npm test`
+## 🗂️ File Structure & Key Components
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- `src/App.js` — Main app, routing, header/footer, navigation.
+- `src/Header.js` — Fixed header with title, Home, and How-to-Play buttons.
+- `src/Footer.js` — Footer with developer credits.
+- `src/Welcome.js` — Welcome screen and entry point.
+- `src/HowToPlay.js` — Game rules and elimination logic explanation.
+- `src/Setup.js` — Player name input and validation.
+- `src/Game.js` — Main game logic, round rotation, bidding, trick input, scoring, elimination, banners/modals.
+- `src/Scoreboard.js` — Collapsible, themed scoreboard for player status and scores.
+- `src/BiddingForm.js` — Handles bidding phase and input.
+- `src/TrickInput.js` — Handles trick input phase.
+- `src/RoundSummary.js` — Shows round results, scores, and elimination info.
+- `src/App.css` — Custom styles and theming.
 
-### `npm run build`
+## 🛠️ Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Clone the repo and install dependencies:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+git clone https://github.com/aadi1011/judgementscoreboard.git
+cd judgementscoreboard
+npm install
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### `npm run eject`
+## 🤝 Contribution Guidelines
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Fork the repo and create a new branch for your feature or fix.
+2. Write clear, concise code and add comments where necessary.
+3. Ensure your changes do not break existing functionality.
+4. Submit a pull request with a detailed description of your changes.
+5. All contributions are welcome—UI improvements, bug fixes, new features, and documentation!
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🙏 Credits & Acknowledgements
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Original developer: **Aadith Sukumar** ([aadithsukumar.me](https://www.aadithsukumar.me))
+- Inspired by the classic Judgement card game played worldwide.
+- Built with [React](https://reactjs.org/) and [Create React App](https://github.com/facebook/create-react-app).
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📄 License
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+MIT License. See `LICENSE` for details.

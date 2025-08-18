@@ -139,8 +139,20 @@ export default function Game() {
       <div className="centered-container animate-fade-in" style={{ minHeight: '100vh' }}>
         <div className="welcome-box" style={{ maxWidth: 700 }}>
           {showElimBanner && (
-            <div style={{ background: '#FF0000', color: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(44,62,80,0.18)', fontWeight: 700, fontSize: '1.1rem', padding: '1rem', marginBottom: '1.2rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.7rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>⚠️</span> This is an <span style={{ textDecoration: 'underline' }}>Elimination Round</span>! The player with the lowest score will be eliminated after this round.
+            <div style={{
+              background: '#FF0000',
+              color: '#fff',
+              borderRadius: 12,
+              boxShadow: '0 2px 8px rgba(44,62,80,0.18)',
+              fontWeight: 700,
+              fontSize: '1.15rem',
+              padding: '1rem',
+              marginBottom: '1.2rem',
+              textAlign: 'center',
+              letterSpacing: '0.02em',
+            }}>
+              <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>⚠️</span>
+              This is an <span style={{ textDecoration: 'underline' }}>Elimination Round</span>! The player with the lowest score will be eliminated after this round.
             </div>
           )}
           <Scoreboard
@@ -176,8 +188,20 @@ export default function Game() {
       <div className="centered-container animate-fade-in" style={{ minHeight: '100vh' }}>
         <div className="welcome-box" style={{ maxWidth: 700 }}>
           {showElimBanner && (
-            <div style={{ background: '#FF0000', color: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(44,62,80,0.18)', fontWeight: 700, fontSize: '1.1rem', padding: '1rem', marginBottom: '1.2rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.7rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>⚠️</span> This is an <span style={{ textDecoration: 'underline' }}>Elimination Round</span>! The player with the lowest score will be eliminated after this round.
+            <div style={{
+              background: '#FF0000',
+              color: '#fff',
+              borderRadius: 12,
+              boxShadow: '0 2px 8px rgba(44,62,80,0.18)',
+              fontWeight: 700,
+              fontSize: '1.15rem',
+              padding: '1rem',
+              marginBottom: '1.2rem',
+              textAlign: 'center',
+              letterSpacing: '0.02em',
+            }}>
+              <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>⚠️</span>
+              This is an <span style={{ textDecoration: 'underline' }}>Elimination Round</span>! The player with the lowest score will be eliminated after this round.
             </div>
           )}
           <Scoreboard
@@ -284,8 +308,20 @@ export default function Game() {
       <div className="centered-container animate-fade-in" style={{ minHeight: '100vh' }}>
         <div className="welcome-box" style={{ maxWidth: 700 }}>
           {showElimBanner && (
-            <div style={{ background: '#FF0000', color: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(44,62,80,0.18)', fontWeight: 700, fontSize: '1.1rem', padding: '1rem', marginBottom: '1.2rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.7rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>⚠️</span> This is an <span style={{ textDecoration: 'underline' }}>Elimination Round</span>! The player with the lowest score will be eliminated after this round.
+            <div style={{
+              background: '#FF0000',
+              color: '#fff',
+              borderRadius: 12,
+              boxShadow: '0 2px 8px rgba(44,62,80,0.18)',
+              fontWeight: 700,
+              fontSize: '1.15rem',
+              padding: '1rem',
+              marginBottom: '1.2rem',
+              textAlign: 'center',
+              letterSpacing: '0.02em',
+            }}>
+              <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>⚠️</span>
+              This is an <span style={{ textDecoration: 'underline' }}>Elimination Round</span>! The player with the lowest score will be eliminated after this round.
             </div>
           )}
           <Scoreboard
