@@ -7,6 +7,7 @@ import Game from "./Game";
 import Header from "./Header";
 import Footer from "./Footer";
 import "./App.css";
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 import { useLocation, useNavigate } from "react-router-dom";
 
