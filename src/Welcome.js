@@ -9,7 +9,7 @@ export default function Welcome() {
     <div className="centered-container animate-fade-in">
       <div className="welcome-box">
         <Header />
-        <div className="welcome-buttons">
+        <div className="welcome-buttons" style={{ marginTop: '1.5rem' }}>
           <button className="btn btn-start" onClick={() => navigate("/setup")}>Start Game</button>
           <button className="btn btn-howto" onClick={() => navigate("/howto")}>How to Play</button>
         </div>

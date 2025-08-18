@@ -41,7 +41,8 @@ export default function Game() {
   const [biddingOrder, setBiddingOrder] = useState([]);
   const [showElimBanner, setShowElimBanner] = useState(false);
   const [elimModal, setElimModal] = useState(null);
-  const [elimRounds, setElimRounds] = useState([]);
+  // const [elimRounds, setElimRounds] = useState([]);w
+  let [elimRounds, setElimRounds] = useState([]);
 
   // Precompute elimination rounds based on starting player count
   useEffect(() => {
@@ -52,8 +53,10 @@ export default function Game() {
     else if (p === 6) rounds = [8, 10];
     else if (p === 7) rounds = [6, 8, 10];
     else if (p === 8) rounds = [5, 7, 8, 10];
-    console.log('Elimination rounds setup:', { playerCount: p, elimRounds: rounds });
-    setElimRounds(rounds);
+    // console.log('Elimination rounds setup:', { playerCount: p, elimRounds: rounds });
+    // elimRounds(rounds);
+    elimRounds = rounds;
+    // console.log('L57:', { setElimRounds: elimRounds, elimRounds: rounds });
   }, [players.length]);
 
   // Load from localStorage if available
@@ -70,7 +73,7 @@ export default function Game() {
       setRoundScores(state.roundScores);
       setEliminated(state.eliminated);
       if (state.biddingOrder) setBiddingOrder(state.biddingOrder);
-      if (state.elimRounds) setElimRounds(state.elimRounds);
+      if (state.elimRounds) setElimRounds(state.elimRounds); 
     }
   }, []);
 
@@ -93,7 +96,7 @@ export default function Game() {
   // Show elimination banner if this is an elimination round (all phases)
   useEffect(() => {
     const isElim = elimRounds.includes(round);
-    console.log('Checking elimination banner:', { round, elimRounds, isElim });
+    // console.log('Checking elimination banner:', { round, elimRounds, isElim });
     setShowElimBanner(isElim);
   }, [round, elimRounds]);
 
@@ -142,11 +145,6 @@ export default function Game() {
           )}
           <Scoreboard
             players={players}
-            activePlayers={activePlayers}
-            round={round}
-            bids={bids}
-            tricks={tricks}
-            eliminated={eliminated}
           />
           <div style={{ marginTop: '2rem' }}>
             <BiddingForm
@@ -155,6 +153,13 @@ export default function Game() {
               bids={bids}
               setBids={setBids}
               onComplete={bids => {
+                // Map bids to correct player in rotation
+                // bids: array in biddingOrder order
+                // Update each player's bid property
+                setPlayers(prevPlayers => prevPlayers.map(p => {
+                  const idx = biddingOrder.findIndex(b => b.name === p.name);
+                  return idx !== -1 ? { ...p, bid: bids[idx] } : { ...p, bid: null };
+                }));
                 setBids(bids);
                 setPhase("playing");
               }}
@@ -194,8 +199,8 @@ export default function Game() {
                 // Calculate scores
                 const newPlayers = players.map(p => {
                   if (p.eliminated) return p;
-                  const idx = activePlayers.findIndex(a => a.name === p.name);
-                  const bid = idx !== -1 ? bids[idx] : null;
+                  // Use bid from p.bid (set in bidding phase)
+                  const bid = p.bid;
                   const wins = tricks.filter(w => w === p.name).length;
                   let delta = 0;
                   if (bid === 0 && wins === 0) delta = round;
@@ -203,7 +208,6 @@ export default function Game() {
                   else delta = -Math.abs(bid - wins);
                   return {
                     ...p,
-                    bid,
                     wins,
                     score: p.score + delta,
                     lastDelta: delta,
@@ -238,10 +242,10 @@ export default function Game() {
       const scores = activePlayers.map(p => p.score);
       const minScore = Math.min(...scores);
       elimPlayers = activePlayers.filter(p => p.score === minScore);
-      console.log('Elimination round:', round, 'Scores:', scores, 'Min:', minScore, 'Eliminated:', elimPlayers.map(p => p.name));
+      // console.log('Elimination round:', round, 'Scores:', scores, 'Min:', minScore, 'Eliminated:', elimPlayers.map(p => p.name));
     }
     const handleNext = () => {
-      console.log('handleNext called', { round, shouldEliminate, elimPlayers, activePlayers });
+      // console.log('handleNext called', { round, shouldEliminate, elimPlayers, activePlayers });
       if (round === TOTAL_ROUNDS) {
         setPhase("end");
         return;
@@ -257,7 +261,7 @@ export default function Game() {
         ));
         setActivePlayers(prev => prev.filter(p => !elimPlayers.some(e => e.name === p.name)));
         setEliminated(prev => [...prev, ...elimPlayers.map(p => p.name)]);
-        console.log('Players after elimination:', players);
+        // console.log('Players after elimination:', players);
       } else {
         setBids([]);
         setTricks([]);
