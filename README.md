@@ -5,7 +5,7 @@ An interactive, modern React app for tracking scores, bids, and eliminations in 
 
 ## 🚀 Live Demo
 
-**Hosted at:** [https://your-demo-url.com](https://your-demo-url.com) <!-- Replace with actual URL when deployed -->
+**Hosted at:** [https://judgement-scoreboard.vercel.app/](https://judgement-scoreboard.vercel.app/) 
 
 ## 🎮 How It Works
 
@@ -55,9 +55,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## 🙏 Credits & Acknowledgements
 
 - Original developer: **Aadith Sukumar** ([aadithsukumar.me](https://www.aadithsukumar.me))
-- Inspired by the classic Judgement card game played worldwide.
-- Built with [React](https://reactjs.org/) and [Create React App](https://github.com/facebook/create-react-app).
+- Inspired by the one-card game I play with my family often.
+- Built with [React](https://reactjs.org/).
 
-## 📄 License
+<!-- ## 📄 License
 
-MIT License. See `LICENSE` for details.
+MIT License. See `LICENSE` for details. -->
