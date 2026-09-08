@@ -54,7 +54,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 🙏 Credits & Acknowledgements
 
-- Original developer: **Aadith Sukumar** ([aadithsukumar.me](https://www.aadithsukumar.me))
+- Original developer: **Aadith Sukumar** ([aadithsukumar.com](https://www.aadithsukumar.com))
 - Inspired by the one-card game I play with my family often.
 - Built with [React](https://reactjs.org/).
 
