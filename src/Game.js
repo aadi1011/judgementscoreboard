@@ -42,7 +42,7 @@ export default function Game() {
   const [showElimBanner, setShowElimBanner] = useState(false);
   const [elimModal, setElimModal] = useState(null);
   // const [elimRounds, setElimRounds] = useState([]);w
-  let [elimRounds, setElimRounds] = useState([]);
+  const [elimRounds, setElimRounds] = useState([]);
 
   // Precompute elimination rounds based on starting player count
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function Game() {
     else if (p === 8) rounds = [5, 7, 8, 10];
     // console.log('Elimination rounds setup:', { playerCount: p, elimRounds: rounds });
     // elimRounds(rounds);
-    elimRounds = rounds;
+    setElimRounds(rounds);
     // console.log('L57:', { setElimRounds: elimRounds, elimRounds: rounds });
   }, [players.length]);
 
