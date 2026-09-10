@@ -16,7 +16,7 @@ export default function Footer() {
       marginTop: '2rem',
     }}>
       <span>
-        <b>Developed by <a href="https://www.aadithsukumar.me" target="_blank" rel="noopener noreferrer" style={{ color: "#5a1010ff", fontWeight: 900, textDecoration: "underline" }}>Aadith Sukumar</a></b>
+        <b>Developed by <a href="https://www.aadithsukumar.com" target="_blank" rel="noopener noreferrer" style={{ color: "#5a1010ff", fontWeight: 900, textDecoration: "underline" }}>Aadith Sukumar</a></b>
       </span>
     </footer>
   );
