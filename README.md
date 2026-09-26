@@ -3,7 +3,7 @@
 
 An interactive, modern React app for tracking scores, bids, and eliminations in the classic Judgement card game.
 
-## 🚀 Live Demo
+## 🚀 Open Scorecard
 
 **Hosted at:** [https://judgement-scoreboard.vercel.app/](https://judgement-scoreboard.vercel.app/) 
 
@@ -15,6 +15,9 @@ An interactive, modern React app for tracking scores, bids, and eliminations in 
 - Modern, responsive UI with collapsible scoreboard, banners, modals, and navigation.
 - Home and How-to-Play buttons always accessible.
 - All game state is saved in localStorage for session persistence.
+
+## 🎮 How To Play
+- Click here to open the complete guide on how to play: [How To Play Judgement Game](https://github.com/aadi1011/judgementscoreboard/blob/main/HowToPlay.md )
 
 ## 🗂️ File Structure & Key Components
 
@@ -31,7 +34,7 @@ An interactive, modern React app for tracking scores, bids, and eliminations in 
 - `src/RoundSummary.js` — Shows round results, scores, and elimination info.
 - `src/App.css` — Custom styles and theming.
 
-## 🛠️ Getting Started
+## 🛠️ Repo Development - Getting Started
 
 Clone the repo and install dependencies:
 
@@ -57,7 +60,3 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - Original developer: **Aadith Sukumar** ([aadithsukumar.com](https://www.aadithsukumar.com))
 - Inspired by the one-card game I play with my family often.
 - Built with [React](https://reactjs.org/).
-
-<!-- ## 📄 License
-
-MIT License. See `LICENSE` for details. -->
