@@ -41,6 +41,8 @@ export default function Game() {
   const [biddingOrder, setBiddingOrder] = useState([]);
   const [showElimBanner, setShowElimBanner] = useState(false);
   const [elimModal, setElimModal] = useState(null);
+  const [preRoundPlayers, setPreRoundPlayers] = useState(null);
+  const [showSummaryUndoConfirm, setShowSummaryUndoConfirm] = useState(false);
   // const [elimRounds, setElimRounds] = useState([]);w
   const [elimRounds, setElimRounds] = useState([]);
 
@@ -73,7 +75,8 @@ export default function Game() {
       setRoundScores(state.roundScores);
       setEliminated(state.eliminated);
       if (state.biddingOrder) setBiddingOrder(state.biddingOrder);
-      if (state.elimRounds) setElimRounds(state.elimRounds); 
+      if (state.elimRounds) setElimRounds(state.elimRounds);
+      if (state.preRoundPlayers !== undefined) setPreRoundPlayers(state.preRoundPlayers);
     }
   }, []);
 
@@ -90,8 +93,9 @@ export default function Game() {
       eliminated,
       biddingOrder,
       elimRounds,
+      preRoundPlayers,
     }));
-  }, [players, activePlayers, round, phase, bids, tricks, roundScores, eliminated, biddingOrder, elimRounds]);
+  }, [players, activePlayers, round, phase, bids, tricks, roundScores, eliminated, biddingOrder, elimRounds, preRoundPlayers]);
 
   // Show elimination banner if this is an elimination round (all phases)
   useEffect(() => {
@@ -220,6 +224,9 @@ export default function Game() {
               setTricks={setTricks}
               onComplete={tricks => {
                 setTricks(tricks);
+                // Snapshot players before applying this round's scoring so the
+                // user can undo/correct the round even after it is completed.
+                setPreRoundPlayers(players);
                 // Calculate scores
                 const newPlayers = players.map(p => {
                   if (p.eliminated) return p;
@@ -290,6 +297,7 @@ export default function Game() {
         setBids([]);
         setTricks([]);
         setRoundScores([]);
+        setPreRoundPlayers(null);
         setPhase("bidding");
         setActivePlayers(players.filter(p => !p.eliminated));
         setRound(round + 1);
@@ -300,9 +308,19 @@ export default function Game() {
       setBids([]);
       setTricks([]);
       setRoundScores([]);
+      setPreRoundPlayers(null);
       setPhase("bidding");
       setActivePlayers(players.filter(p => !p.eliminated));
       setRound(round + 1);
+    };
+    const handleUndoRoundCompletion = () => {
+      if (!preRoundPlayers) return;
+      setPlayers(preRoundPlayers);
+      setTricks(prev => prev.slice(0, -1));
+      setRoundScores([]);
+      setPreRoundPlayers(null);
+      setPhase("playing");
+      setShowSummaryUndoConfirm(false);
     };
     return (
       <div className="centered-container animate-fade-in" style={{ minHeight: '100vh' }}>
@@ -343,6 +361,31 @@ export default function Game() {
               }
             }}
           />
+          {preRoundPlayers && (
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <button
+                type="button"
+                className="btn"
+                style={{ fontSize: '1rem', padding: '0.5rem 1.2rem' }}
+                onClick={() => setShowSummaryUndoConfirm(true)}
+              >
+                Undo Last Trick &amp; Correct Round
+              </button>
+            </div>
+          )}
+          {showSummaryUndoConfirm && (
+            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ background: '#fffde4', borderRadius: '12px', padding: '1.5rem', maxWidth: '380px', width: '90%', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+                <p style={{ color: '#184d2b', fontWeight: 600, marginBottom: '1rem' }}>
+                  This round's scoring will be reverted so you can correct the last trick winner. Continue?
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                  <button type="button" className="btn btn-howto" onClick={handleUndoRoundCompletion}>Yes, Undo</button>
+                  <button type="button" className="btn" onClick={() => setShowSummaryUndoConfirm(false)}>Cancel</button>
+                </div>
+              </div>
+            </div>
+          )}
           {elimModal && (
             <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.45)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ background: '#FF0000', color: '#fff', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.18)', padding: '2rem 2.5rem', textAlign: 'center', fontWeight: 700, fontSize: '1.2rem', maxWidth: 350 }}>
